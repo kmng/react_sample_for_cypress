@@ -18,6 +18,8 @@ phases:
     commands:
       - echo Building...
       - yarn build
+      - echo copy to s3
+      - aws s3 cp sync build s3://stefantopia-7-23-2023 
 artifacts:
   files:
     - "build/*"
