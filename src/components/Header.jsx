@@ -5,7 +5,7 @@ function Header() {
   return (
     <header className="main-header">
       <img src={logo} alt="A list" />
-      <h1>React Tasks version 3</h1>
+      <h1>React Tasks version 4</h1>
     </header>
   );
 }
