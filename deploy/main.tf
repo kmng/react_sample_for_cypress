@@ -228,8 +228,44 @@ resource "aws_codebuild_project" "codebuild_project" {
   logs_config {
     cloudwatch_logs {
       status      = "ENABLED"
-      group_name  = "/aws/codebuild/codebuild-spring-boot"
+      group_name  = "/aws/codebuild/codebuild-${var.stack_name}"
       stream_name = "{codebuild-spring-boot}-{build-id}"
+
+    }
+  }
+
+}
+
+resource "aws_codebuild_project" "codebuild_project_test" {
+  name         = "codebuild-${var.stack_name}-test"
+  description  = "CodeBuild project for cypress"
+  service_role = aws_iam_role.codebuild_role.arn
+  vpc_config {
+    vpc_id             = aws_vpc.main_vpc.id
+    subnets            = [aws_subnet.private.id]
+    security_group_ids = [aws_security_group.codebuild_sg.id]
+  }
+  environment {
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "aws/codebuild/standard:5.0"
+    type            = "LINUX_CONTAINER"
+    privileged_mode = true
+  }
+  source {
+    type            = "CODEPIPELINE"
+    buildspec       = "buildspec_cypress.yml"
+    git_clone_depth = 1
+  }
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      status      = "ENABLED"
+      group_name  = "/aws/codebuild/codebuild-${var.stack_name}-test"
+      stream_name = "{codebuild-spring-boot}-{build-id}-1"
 
     }
   }
@@ -369,12 +405,12 @@ resource "aws_codepipeline" "pipeline" {
     name = "Build"
 
     action {
-      name             = "Build"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["source"]
-      version          = "1"
+      name            = "Build"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["source"]
+      version         = "1"
 
       configuration = {
         ProjectName = aws_codebuild_project.codebuild_project.name
@@ -382,7 +418,22 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
+  stage {
+    name = "Test"
 
+    action {
+      name            = "Test"
+      category        = "Test"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["source"]
+      version         = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.codebuild_project_test.name
+      }
+    }
+  }
 
 
 }
