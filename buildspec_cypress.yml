@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - echo Building...
-      - node_modules/.bin/cypress run
+      - npx cypress run
 artifacts:
   files:
     - "cypress/*"
