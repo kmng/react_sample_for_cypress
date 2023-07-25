@@ -14,5 +14,4 @@ phases:
       - npx cypress run
 artifacts:
   files:
-    - "cypress/*"
-    - "cypress/**/*"
+    - "**/*"
