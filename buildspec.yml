@@ -13,7 +13,7 @@ phases:
       - echo Building...
       - npm run build
       - echo copy to s3
-      - aws s3 sync dist s3://stefantopia-7-24-2023
+      - aws s3 sync dist s3://stefantopia-9-25-2023
 artifacts:
   files:
     - "dist/*"
