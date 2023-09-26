@@ -18,7 +18,7 @@ describe('tasks page', () => {
   it('should display the page title', () => {
     cy.visit('http://stefantopia-9-25-2023.s3-website-us-west-2.amazonaws.com/');
     cy.get('h1').should('have.length', 1);
-    cy.get('h1').contains('React Tasks version 4');
+    cy.get('h1').contains('React Tasks version 5');
     // cy.contains('My Cypress Course Tasks');
   });
 });
