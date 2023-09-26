@@ -12,6 +12,9 @@ phases:
     commands:
       - echo Building...
       - npx cypress run
+      - aws s3 sync cypress/screenshots s3://stefantopia-9-25-2023/cypress/report/screenshots
+      - aws s3 sync cypress/videos s3://stefantopia-9-25-2023/cypress/report/videos
+      
 artifacts:
   files:
     - "**/*"
