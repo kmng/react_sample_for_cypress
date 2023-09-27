@@ -17,6 +17,9 @@ phases:
       - aws s3 rm s3://stefantopia-9-25-2023/cypress --recursive  
       - cd cypress
       - python generate_links.py
+      - ls -al
+      - cd ..
+      - pwd
       - aws s3 cp cypress s3://stefantopia-9-25-2023/cypress --recursive  
       
 artifacts:
