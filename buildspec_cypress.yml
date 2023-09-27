@@ -20,7 +20,7 @@ phases:
       - ls -al
       - cd ..
       - pwd
-      - aws s3 cp cypress s3://stefantopia-9-25-2023/cypress --recursive  
+      - aws s3 cp cypress s3://stefantopia-9-25-2023/cypress --recursive --exclude "e2e/*" --exclude "fixtures/*" --exclude "support/*" --exclude "generate_links.py"
       
 artifacts:
   files:
