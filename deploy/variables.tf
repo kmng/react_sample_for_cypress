@@ -10,3 +10,9 @@ variable "aws_profile" {
 variable "stack_name" {
   type = string
 }
+
+
+variable "admin_email_addresses" {
+  type    = list(string)
+  default = ["admin1@example.com", "admin2@example.com"]
+}

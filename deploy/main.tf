@@ -621,3 +621,13 @@ module "s3_bucket" {
   # Add any other S3 bucket configuration options here
 }
 
+resource "aws_sns_topic" "pipeline_notifications" {
+  name = "PipelineNotifications"
+}
+
+resource "aws_sns_topic_subscription" "admin_subscriptions" {
+  count           = length(var.admin_email_addresses)
+  topic_arn       = aws_sns_topic.pipeline_notifications.arn
+  protocol        = "email"
+  endpoint        = var.admin_email_addresses[count.index]
+}
