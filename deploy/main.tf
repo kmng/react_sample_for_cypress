@@ -643,3 +643,21 @@ data "archive_file" "lambda_code" {
   source_file  = "notification.js"
   output_path = "notification.zip"
 }
+
+
+resource "aws_iam_role" "pipeline_notification_function" {
+  name = "PipelineNotificationFunctionRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
