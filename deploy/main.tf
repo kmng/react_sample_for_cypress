@@ -640,6 +640,6 @@ resource "aws_s3_bucket" "lambda_code_bucket" {
 
 data "archive_file" "lambda_code" {
   type        = "zip"
-  source_dir  = "notification.js"
+  source_file  = "notification.js"
   output_path = "notification.zip"
 }
