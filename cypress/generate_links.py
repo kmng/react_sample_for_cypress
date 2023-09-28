@@ -45,6 +45,7 @@ html_document = '''
     <h3>Cypress Results</h3>
     <br/>
     <ul class="list-group">
+    <a href="/cypress/results/mochawesome.html">Result Page</a>
     <!-- Insert here -->
     </ul>
 </div>
