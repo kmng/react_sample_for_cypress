@@ -631,3 +631,46 @@ resource "aws_sns_topic_subscription" "admin_subscriptions" {
   protocol        = "email"
   endpoint        = var.admin_email_addresses[count.index]
 }
+
+
+resource "aws_s3_bucket" "lambda_code_bucket" {
+  bucket = "lambda-deployment-bucket"
+  acl    = "private"
+}
+
+data "lambda_archive_file" "pipeline_notification_function" {
+  type        = "zip"
+  source_file = "notification.js"
+  output_path = "lambda_function_payload.zip"
+}
+
+resource "aws_iam_role" "pipeline_notification_function" {
+  name = "PipelineNotificationFunctionRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_lambda_function" "pipeline_notification_function" {
+
+  filename      = "lambda_function_payload.zip"
+  function_name = "pipeline_notification_function"
+  role          = aws_iam_role.pipeline_notification_function.arn
+  handler       = "index.handler"
+
+  source_code_hash = data.archive_file.pipeline_notification_function.output_base64sha256
+
+  runtime = "nodejs18.x"
+
+
+}
+
