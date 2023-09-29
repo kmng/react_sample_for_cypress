@@ -697,7 +697,7 @@ resource "aws_cloudwatch_event_rule" "lambda_trigger_rule" {
     "source": ["aws.codepipeline"],
     "detail-type": ["CodePipeline Stage Execution State Change"],
     "detail": {
-      "state": ["STARTED"]
+      "state": ["FAILED"]
     }
   }
   EOF
