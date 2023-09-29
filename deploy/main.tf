@@ -656,10 +656,35 @@ resource "aws_iam_role" "pipeline_notification_function" {
   })
 }
 
+resource "aws_iam_policy" "sns_publish_policy" {
+  name        = "SNSPublishPolicy"
+  description = "Policy for publishing to SNS"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = ["sns:Publish"],
+        Effect   = "Allow",
+        Resource = aws_sns_topic.pipeline_notifications.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "sns_publish_policy_attachment" {
+  policy_arn = aws_iam_policy.sns_publish_policy.arn
+  role       = aws_iam_role.pipeline_notification_function.name
+}
+
 resource "aws_lambda_function" "pipeline_notification_function" {
   filename      = "notification.zip"
   function_name = "PipelineNotificationFunction"
   role          = aws_iam_role.pipeline_notification_function.arn
   handler       = "notification.handler"
   runtime       = "nodejs14.x"
+  environment {
+    variables = {
+      SNS_TOPIC_ARN = aws_sns_topic.pipeline_notifications.arn
+    }
+  }
 }
