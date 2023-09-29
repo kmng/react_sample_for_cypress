@@ -633,11 +633,6 @@ resource "aws_sns_topic_subscription" "admin_subscriptions" {
 }
 
 
-resource "aws_s3_bucket" "lambda_code_bucket" {
-  bucket = "lambda-deployment-bucket"
-  acl    = "private"
-}
-
 data "archive_file" "lambda_code" {
   type        = "zip"
   source_file  = "notification.js"
