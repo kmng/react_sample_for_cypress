@@ -736,7 +736,7 @@ resource "aws_iam_policy" "lambda_execution_policy" {
   name        = "lambda-execution-policy"
   description = "Policy for Lambda execution from CloudWatch Events"
   policy      = <<EOF
-  {
+{
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -749,8 +749,8 @@ resource "aws_iam_policy" "lambda_execution_policy" {
         ]
       }
     ]
-  }
-  EOF
+}
+EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
