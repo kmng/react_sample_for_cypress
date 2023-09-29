@@ -1,8 +1,7 @@
-
-export const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   try {
-    
-    
+
+
     return {
       statusCode: 200,
       body: JSON.stringify('Notification sent successfully'),
