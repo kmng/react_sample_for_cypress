@@ -660,6 +660,6 @@ resource "aws_lambda_function" "pipeline_notification_function" {
   filename      = "notification.zip"
   function_name = "PipelineNotificationFunction"
   role          = aws_iam_role.pipeline_notification_function.arn
-  handler       = "index.handler"
+  handler       = "notification.handler"
   runtime       = "nodejs14.x"
 }
