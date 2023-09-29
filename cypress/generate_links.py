@@ -1,66 +1,57 @@
-import sys
+
 import os
+from datetime import datetime
 
-filename = "index.html"  # Specify the path to your index.html file
+exclude_files = ['./generate_links.py', './index.html']
+exclude_folders = ['./downloads', './e2e', './results/assets', './support', './fixtures']
 
-directory = "cypress"
+def generate_file_links(directory):
+    file_links = []
+    for entry in os.listdir(directory):
+        entry_path = os.path.join(directory, entry)
+        if os.path.isfile(entry_path) and entry_path not in exclude_files:
+            file_link = f'<li class="list-group-item"><a href="{entry_path}">{entry_path}</a></li>'
+            file_links.append(file_link)
+        elif os.path.isdir(entry_path) and entry_path not in exclude_folders:
+            subdirectory_links = generate_file_links(entry_path)
+            file_links.extend(subdirectory_links)
+    return file_links
 
-html_document = '''
+def generate_html_document(directory ):
+    file_links = generate_file_links(directory)
+    # get current time in string format of yyyy-MM-dd HH:mm:ss
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    html_content = '\n'.join(file_links)
+    html_document = f'''
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <title>Artifacts from latest pipeline execution</title>
+    </head>
+    <body>
+        <div class="container" style="margin-top:50px">
+            <h3>Artifacts from pipeline execution - {current_time} </h3>
+            <ul class="list-group">
+                {html_content}
+            </ul>
+        </div>
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<title>Cypress Project List</title>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
+</html>
+    '''
+    return html_document
 
-<style>
-    .container {
-        margin-top: 50px;
-    }
-    body {
-        background-color: #f5f5f5;
-        /* adjust the font */
-        font-family: "Roboto", sans-serif;
-    }
-    ul {
-        list-style-type: none;
-    }
-    li {
-        margin-bottom: 10px;
-    }
-    /* style the list in material style */
-    .list-group-item {
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #fff;
-    }
-</style>
-</head>
+# Provide the directory path you want to generate the HTML for
+directory_path = '.'  # Use '.' for the current directory
 
-<body>
-<div class="container">
-    <h3>Cypress Results</h3>
-    <br/>
-    <ul class="list-group">
-    <a href="/cypress/results/mochawesome.html">Result Page</a>
-    <!-- Insert here -->
-    </ul>
-</div>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-</body>
+html = generate_html_document(directory_path)
 
-</html>'''
-
-
-
-
-if os.path.exists(filename) == False:
-    # Create the file if it doesn't exist
-    with open(filename, "w") as file:
-        file.write(html_document)
-
-
+# Write the HTML document to a file
+with open('index.html', 'w') as file:
+    file.write(html)
 
