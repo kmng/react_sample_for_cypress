@@ -709,51 +709,13 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.lambda_trigger_rule.name
   target_id = "target-lambda-function"
 
-  role_arn  = aws_iam_role.cloudwatch_events_role.arn
-
   arn = aws_lambda_function.pipeline_notification_function.arn
 }
 
-
-resource "aws_iam_role" "cloudwatch_events_role" {
-  name = "cloudwatch-events-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "events.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy" "lambda_execution_policy" {
-  name        = "lambda-execution-policy"
-  description = "Policy for Lambda execution from CloudWatch Events"
-  policy      = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "lambda:InvokeFunction"
-        ],
-        "Resource": [
-          "${aws_lambda_function.pipeline_notification_function.arn}"
-        ]
-      }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
-  policy_arn = aws_iam_policy.lambda_execution_policy.arn
-  role       = aws_iam_role.cloudwatch_events_role.name
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_foo" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.pipeline_notification_function.function_name
+    principal = "events.amazonaws.com"
+    source_arn = aws_cloudwatch_event_rule.lambda_trigger_rule.arn
 }
