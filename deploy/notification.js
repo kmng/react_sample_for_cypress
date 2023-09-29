@@ -1,6 +1,5 @@
 
-
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   try {
     
     
