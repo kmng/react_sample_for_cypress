@@ -37,7 +37,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 
 
 resource "aws_eip" "nat_eip" {
-  vpc        = true
+  domain     = "vpc"
   depends_on = [aws_internet_gateway.internet_gateway]
   tags = {
     Name      = "EIP-${var.stack_name}"
@@ -635,7 +635,7 @@ resource "aws_sns_topic_subscription" "admin_subscriptions" {
 
 data "archive_file" "lambda_code" {
   type        = "zip"
-  source_file  = "notification.js"
+  source_file = "notification.js"
   output_path = "notification.zip"
 }
 
@@ -690,8 +690,8 @@ resource "aws_lambda_function" "pipeline_notification_function" {
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_trigger_rule" {
-  name        = "lambda-trigger-rule"
-  description = "Trigger Lambda function on event"
+  name          = "lambda-trigger-rule"
+  description   = "Trigger Lambda function on event"
   event_pattern = <<EOF
   {
     "source": ["aws.codepipeline"],
@@ -756,9 +756,9 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
 
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_foo" {
-    statement_id = "AllowExecutionFromCloudWatch"
-    action = "lambda:InvokeFunction"
-    function_name = aws_lambda_function.pipeline_notification_function.function_name
-    principal = "events.amazonaws.com"
-    source_arn = aws_cloudwatch_event_rule.lambda_trigger_rule.arn
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.pipeline_notification_function.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.lambda_trigger_rule.arn
 }
