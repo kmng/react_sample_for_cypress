@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
 
     // get parameter
 
-    const pipeline = event.detail.pipeline;
+    const pipeline = event['pipeline'];
 
     if (!snsTopicArn) {
       throw new Error('SNS_TOPIC_ARN environment variable is not set.');
