@@ -709,6 +709,10 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   target_id = "target-lambda-function"
 
   arn = aws_lambda_function.pipeline_notification_function.arn
+  input = jsonencode({
+    pipeline: "${aws_codepipeline.pipeline.name}"
+
+  });
 }
 
 resource "aws_iam_role" "cloudwatch_events_role" {

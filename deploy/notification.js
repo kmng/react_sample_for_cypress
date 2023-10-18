@@ -7,11 +7,15 @@ exports.handler = async (event, context) => {
     // Get the SNS topic ARN from the environment variable
     const snsTopicArn = process.env.SNS_TOPIC_ARN;
 
+    // get parameter
+
+    const pipeline = event.detail.pipeline;
+
     if (!snsTopicArn) {
       throw new Error('SNS_TOPIC_ARN environment variable is not set.');
     }
 
-    const message = 'Your build pipeline has failed.';
+    const message = 'Your build pipeline :'+pipeline+' has failed.';
 
     const params = {
       Message: message,
