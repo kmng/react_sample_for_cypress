@@ -14,7 +14,7 @@ phases:
       - pwd
       - npm run build
       - echo copy to s3
-      - aws s3 sync dist s3://stefantopia-9-25-2023
+      - aws s3 sync dist s3://stefantopia-10-17-2023
 artifacts:
   files:
     - "dist/*"
