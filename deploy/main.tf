@@ -697,7 +697,7 @@ resource "aws_lambda_function" "pipeline_notification_function" {
   role          = aws_iam_role.pipeline_notification_function.arn
   handler       = "notification.handler"
   # depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
-  runtime       = "nodejs14.x"
+  runtime = "nodejs14.x"
   environment {
     variables = {
       SNS_TOPIC_ARN = aws_sns_topic.pipeline_notifications.arn
@@ -781,4 +781,49 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_foo" {
   function_name = aws_lambda_function.pipeline_notification_function.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.lambda_trigger_rule.arn
+}
+
+
+resource "aws_cloud9_environment_ec2" "cloud9_instance" {
+  name                        = "cloud9_instance-${var.stack_name}"
+  instance_type               = "t2.medium"
+  automatic_stop_time_minutes = 30
+  subnet_id                   = aws_subnet.public.id
+  image_id                    = "amazonlinux-2-x86_64"
+  connection_type             = "CONNECT_SSM"
+
+  tags = {
+    Terraform = "true"
+  }
+}
+
+data "aws_instance" "cloud9_instance" {
+  filter {
+    name = "tag:aws:cloud9:environment"
+    values = [
+    aws_cloud9_environment_ec2.cloud9_instance.id]
+  }
+}
+
+resource "aws_eip" "cloud9_eip" {
+  instance = data.aws_instance.cloud9_instance.id
+  domain   = "vpc"
+}
+
+data "aws_security_group" "cloud9_secgroup" {
+  filter {
+    name = "tag:aws:cloud9:environment"
+    values = [
+      aws_cloud9_environment_ec2.cloud9_instance.id
+    ]
+  }
+}
+
+resource "aws_security_group_rule" "tcp_8080" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = data.aws_security_group.cloud9_secgroup.id
 }
