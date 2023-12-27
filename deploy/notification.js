@@ -11,11 +11,15 @@ exports.handler = async (event, context) => {
 
     const pipeline = event['pipeline'];
 
+    console.log('pipeline is ' + pipeline);
+
     if (!snsTopicArn) {
       throw new Error('SNS_TOPIC_ARN environment variable is not set.');
     }
 
-    const message = 'Your build pipeline :'+pipeline+' has failed.';
+    const message = 'Your build pipeline :' + pipeline + ' has failed.';
+
+    console.log('message email is ' + message);
 
     const params = {
       Message: message,
@@ -24,7 +28,7 @@ exports.handler = async (event, context) => {
     };
 
     await sns.publish(params).promise();
-    
+
     return {
       statusCode: 200,
       body: JSON.stringify('Notification sent successfully'),

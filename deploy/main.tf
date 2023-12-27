@@ -683,20 +683,20 @@ resource "aws_iam_role_policy_attachment" "basic" {
   role       = aws_iam_role.pipeline_notification_function.name
 }
 
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "/aws/lambda/PipelineNotificationFunction"
-  retention_in_days = 7
-  lifecycle {
-    prevent_destroy = false
-  }
-}
+# resource "aws_cloudwatch_log_group" "lambda_log_group" {
+#   name              = "/aws/lambda/PipelineNotificationFunction"
+#   retention_in_days = 7
+#   lifecycle {
+#     prevent_destroy = false
+#   }
+# }
 
 resource "aws_lambda_function" "pipeline_notification_function" {
   filename      = "notification.zip"
   function_name = "PipelineNotificationFunction"
   role          = aws_iam_role.pipeline_notification_function.arn
   handler       = "notification.handler"
-  depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
+  # depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
   runtime       = "nodejs14.x"
   environment {
     variables = {
