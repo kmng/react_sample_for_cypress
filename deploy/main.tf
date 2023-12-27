@@ -676,6 +676,13 @@ resource "aws_iam_role_policy_attachment" "sns_publish_policy_attachment" {
   role       = aws_iam_role.pipeline_notification_function.name
 }
 
+
+
+resource "aws_iam_role_policy_attachment" "basic" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.pipeline_notification_function.name
+}
+
 resource "aws_lambda_function" "pipeline_notification_function" {
   filename      = "notification.zip"
   function_name = "PipelineNotificationFunction"
